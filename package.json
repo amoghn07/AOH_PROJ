@@ -11,7 +11,8 @@
     "server:prod": "npm run build && node dist/server.js",
     "test": "jest",
     "analyze-email": "ts-node src/agents/demoRunner.ts",
-    "ingest-gmail": "ts-node src/poller/gmailPoller.ts"
+    "ingest-gmail": "ts-node src/poller/gmailPoller.ts",
+    "upload-contracts": "ts-node src/scripts/uploadContracts.ts"
   },
   "keywords": [
     "vendor",

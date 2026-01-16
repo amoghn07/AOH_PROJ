@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import anthropicService from '../services/anthropicService';
+import sensoService from '../services/sensoService';
 import { Email, ParsedEmailContent } from '../types/email';
 import { Dispute, DisputeAnalysis, ResolutionCase } from '../types/dispute';
 import { logger } from '../utils/logger';
@@ -60,6 +61,7 @@ Return a JSON object with:
 
   /**
    * Analyze dispute and generate resolution recommendation
+   * Enhanced with Senso contract retrieval
    */
   async analyzeDispute(
     email: Email,
@@ -69,6 +71,48 @@ Return a JSON object with:
     paymentHistory: string
   ): Promise<DisputeAnalysis> {
     logger.info('Analyzing dispute', { emailId: email.id });
+
+    // Try to retrieve contract from Senso if invoice number is available
+    let sensoContractContext = '';
+    if (parsedContent.invoiceNumbers.length > 0) {
+      logger.info('Querying Senso for contract information', {
+        invoiceNumber: parsedContent.invoiceNumbers[0],
+        vendorEmail: email.from,
+      });
+
+      const sensoContract = await sensoService.queryContractByInvoice(
+        parsedContent.invoiceNumbers[0],
+        email.from
+      );
+
+      if (sensoContract) {
+        logger.info('Contract retrieved from Senso', {
+          contractNumber: sensoContract.contractNumber,
+          vendorName: sensoContract.vendorName,
+        });
+
+        sensoContractContext = `
+SENSO CONTRACT INTELLIGENCE:
+Contract Number: ${sensoContract.contractNumber}
+Vendor: ${sensoContract.vendorName}
+Effective: ${sensoContract.effectiveDate} to ${sensoContract.expirationDate}
+
+Payment Terms: ${sensoContract.terms.paymentTerms}
+Service Description: ${sensoContract.terms.serviceDescription}
+Dispute Resolution: ${sensoContract.terms.disputeResolution}
+
+Special Clauses:
+${sensoContract.terms.specialClauses.map((c) => `- ${c}`).join('\n')}
+
+Full Context:
+${sensoContract.rawContext}
+`;
+      } else {
+        logger.warn('No contract found in Senso, falling back to local data', {
+          invoiceNumber: parsedContent.invoiceNumbers[0],
+        });
+      }
+    }
 
     const analysisPrompt = `You are analyzing a vendor dispute. Here is the context:
 
@@ -87,8 +131,7 @@ PARSED DISPUTE INFO:
 VENDOR CONTEXT:
 ${vendorContext}
 
-CONTRACT TERMS:
-${contractContext}
+${sensoContractContext ? sensoContractContext : `CONTRACT TERMS (Local Data):\n${contractContext}`}
 
 PAYMENT HISTORY:
 ${paymentHistory}
