@@ -25,7 +25,7 @@ export interface ContractTerms {
   serviceDescription: string;
   scope: string;
   liabilities: string;
-  dispute resolution: string;
+  disputeResolution: string;
   specialClauses: string[];
 }
 

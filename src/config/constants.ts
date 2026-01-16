@@ -1,4 +1,4 @@
-export const MODEL = 'claude-3-5-sonnet-20241022';
+export const MODEL = 'claude-opus-4-1';
 export const MAX_TOKENS = 2048;
 export const TEMPERATURE = 0.7;
 

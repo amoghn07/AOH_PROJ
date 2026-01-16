@@ -47,7 +47,7 @@ export const sampleContracts: VendorContract[] = [
       serviceDescription: 'Supply of IT equipment and accessories',
       scope: 'Computers, monitors, keyboards, mice, networking equipment',
       liabilities: 'Vendor responsible for defective goods within 30 days',
-      dispute resolution: 'Initial contact with Account Manager, escalate to Legal if unresolved after 5 business days',
+      disputeResolution: 'Initial contact with Account Manager, escalate to Legal if unresolved after 5 business days',
       specialClauses: [
         'Early Payment Discount: 2% off if paid within 10 days',
         'Volume discount applies: 5% off for orders over $10,000',
@@ -72,7 +72,7 @@ export const sampleContracts: VendorContract[] = [
       serviceDescription: 'Office furniture and supplies',
       scope: 'Desks, chairs, filing cabinets, printer paper, office supplies',
       liabilities: 'Vendor responsible for damaged goods upon delivery',
-      dispute resolution: 'Email disputes to disputes@officesolutions.com, response within 3 business days',
+      disputeResolution: 'Email disputes to disputes@officesolutions.com, response within 3 business days',
       specialClauses: [
         'Free shipping on orders over $5,000',
         'Custom furniture orders are non-refundable',
@@ -96,7 +96,7 @@ export const sampleContracts: VendorContract[] = [
       serviceDescription: 'Shipping and logistics services',
       scope: 'Domestic and international shipping, warehousing, inventory management',
       liabilities: 'Liability capped at invoice value; insurance available at additional cost',
-      dispute resolution: 'Escalate to Finance Manager for amounts over $1,000',
+      disputeResolution: 'Escalate to Finance Manager for amounts over $1,000',
       specialClauses: [
         'Fuel surcharge may apply based on market rates',
         'Weight discrepancies: vendor reconciles monthly with actual shipments',
@@ -119,6 +119,11 @@ export function getVendorById(vendorId: string): Vendor | undefined {
 
 export function getContractByVendorId(vendorId: string): VendorContract | undefined {
   return sampleContracts.find((c) => c.vendorId === vendorId);
+}
+
+export function getVendorByEmail(email: string): Vendor | undefined {
+  const normalized = email.toLowerCase();
+  return sampleVendors.find((v) => v.email.toLowerCase() === normalized);
 }
 
 export function formatVendorContext(vendor: Vendor): string {
@@ -153,7 +158,7 @@ Payment Terms: ${contract.paymentTerms.termsName}
 
 Vendor Liabilities: ${contract.terms.liabilities}
 
-Dispute Resolution Process: ${contract.terms.dispute resolution}
+Dispute Resolution Process: ${contract.terms.disputeResolution}
 
 Special Clauses:
 ${specialClauses}

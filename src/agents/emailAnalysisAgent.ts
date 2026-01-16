@@ -41,7 +41,15 @@ Return a JSON object with:
     const response = await anthropicService.analyzeWithSystemPrompt(parsePrompt, systemPrompt);
 
     try {
-      const parsed = JSON.parse(response);
+      // Remove markdown code blocks if present
+      let jsonString = response.trim();
+      if (jsonString.startsWith('```json')) {
+        jsonString = jsonString.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      } else if (jsonString.startsWith('```')) {
+        jsonString = jsonString.replace(/^```\s*/, '').replace(/\s*```$/, '');
+      }
+      
+      const parsed = JSON.parse(jsonString);
       logger.info('Email parsed successfully', { parsed });
       return parsed as ParsedEmailContent;
     } catch (error) {
