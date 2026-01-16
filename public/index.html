@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vendor Dispute Analyzer</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-content">
+          <h1>🤖 Vendor Dispute Analyzer</h1>
+          <p class="subtitle">AI-Powered Email Analysis & Dispute Resolution</p>
+        </div>
+        <div class="status" id="healthStatus">
+          <span class="status-dot"></span>
+          <span id="statusText">Checking...</span>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="main">
+        <!-- Left Panel: Input -->
+        <section class="panel input-panel">
+          <h2>📧 Analyze Vendor Email</h2>
+
+          <!-- Quick Load Buttons -->
+          <div class="quick-actions">
+            <h3>Quick Load Sample Emails</h3>
+            <div id="sampleEmails" class="sample-buttons"></div>
+          </div>
+
+          <!-- Manual Input Form -->
+          <form id="analyzeForm" class="form">
+            <div class="form-group">
+              <label for="vendorSelect">Vendor</label>
+              <select id="vendorSelect" required>
+                <option value="">-- Select a Vendor --</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="subject">Email Subject</label>
+              <input
+                type="text"
+                id="subject"
+                placeholder="e.g., Invoice INV-2024-0004 - Underpayment Issue"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="body">Email Body</label>
+              <textarea
+                id="body"
+                rows="8"
+                placeholder="Paste the vendor email here..."
+                required
+              ></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+              Analyze Email
+            </button>
+          </form>
+        </section>
+
+        <!-- Right Panel: Results -->
+        <section class="panel results-panel">
+          <div id="loadingSpinner" class="hidden">
+            <div class="spinner"></div>
+            <p>Analyzing with Claude...</p>
+          </div>
+
+          <div id="noResults" class="no-results">
+            <p>👈 Load a sample email or enter your own to get started</p>
+          </div>
+
+          <div id="resultsContent" class="hidden">
+            <!-- Case Header -->
+            <div class="case-header">
+              <div>
+                <h2 id="resultVendor"></h2>
+                <p class="case-id" id="caseId"></p>
+              </div>
+              <div class="confidence-badge" id="confidenceBadge"></div>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="metrics">
+              <div class="metric">
+                <span class="metric-label">Recommendation</span>
+                <span class="metric-value" id="recommendation"></span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Confidence</span>
+                <span class="metric-value" id="confidence"></span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Approvals Required</span>
+                <span class="metric-value" id="approvals"></span>
+              </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+              <button class="tab-btn active" data-tab="reasoning">
+                Reasoning
+              </button>
+              <button class="tab-btn" data-tab="draft">Draft Response</button>
+              <button class="tab-btn" data-tab="full">Full Analysis</button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+              <!-- Reasoning Tab -->
+              <div id="reasoning" class="tab-pane active">
+                <div class="analysis-box" id="reasoningContent"></div>
+              </div>
+
+              <!-- Draft Response Tab -->
+              <div id="draft" class="tab-pane">
+                <div class="draft-response" id="draftContent"></div>
+                <button class="btn btn-secondary" id="copyDraftBtn">
+                  📋 Copy to Clipboard
+                </button>
+              </div>
+
+              <!-- Full Analysis Tab -->
+              <div id="full" class="tab-pane">
+                <div class="analysis-box" id="fullContent"></div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+              <button class="btn btn-success" id="approveBtn">
+                ✓ Approve Case
+              </button>
+              <button class="btn btn-warning" id="reviewBtn">
+                ? Needs Review
+              </button>
+              <button class="btn btn-danger" id="rejectBtn">
+                ✗ Reject Case
+              </button>
+            </div>
+          </div>
+
+          <div id="errorContent" class="hidden error-box"></div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
